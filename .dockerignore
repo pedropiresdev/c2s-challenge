@@ -1,0 +1,16 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.pytest_cache
+.vscode
+.idea
+*.env # Se você tiver um .env para prod que não deve ir para a imagem de dev
+venv/
+env/
+.DS_Store
+*.swp
+*.bak

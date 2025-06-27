@@ -1,0 +1,37 @@
+services:
+  app:
+    build: .  # Constrói a imagem a partir do Dockerfile no diretório atual
+    ports:
+      - "8000:8000"  # Mapeia a porta 8000 do host para a porta 8000 do contêiner
+    volumes:
+      - .:/app  # Monta o diretório atual do projeto dentro do contêiner
+                # Isso permite que as mudanças no código-fonte local reflitam no contêiner sem reconstruir a imagem
+    env_file:
+      - .env  # Carrega as variáveis de ambiente do seu arquivo .env
+    depends_on:
+      - db  # Garante que o serviço 'db' inicie antes do serviço 'app'
+    networks:
+      - app-network # Conecta ao network definido abaixo
+
+  # Serviço do banco de dados PostgreSQL
+  db:
+    image: postgres:15-alpine  # Usa uma imagem oficial do PostgreSQL (versão 15, leve com alpine)
+    environment:
+      POSTGRES_DB: ${DB_NAME}      # Pega o nome do DB do .env
+      POSTGRES_USER: ${DB_USER}    # Pega o usuário do DB do .env
+      POSTGRES_PASSWORD: ${DB_PASSWORD} # Pega a senha do DB do .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data # Volume persistente para os dados do DB
+    ports:
+      - "5432:5432" # Mapeia a porta 5432 do host para a porta 5432 do contêiner (opcional, só para acesso externo)
+    networks:
+      - app-network # Conecta ao network definido abaixo
+
+# Redes para comunicação interna entre os serviços
+networks:
+  app-network:
+    driver: bridge
+
+# Volumes persistentes para dados do banco de dados
+volumes:
+  pg_data:
