@@ -1,87 +1,71 @@
+# your_fastapi_project/scripts/seed_data.py
+
 import asyncio
-import sys
 import os
-import random
 from datetime import datetime
+from typing import List
 from faker import Faker
-from faker.providers import automotive, color
+from faker_vehicle import VehicleProvider
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from app.core.config import settings
+from app.repository.models.automovel import Automovel, Base
 
-from app.repository.connection import get_db_session
-from app.schemas.automovel_schemas import AutomovelCreate, TipoCombustivel
-from app.view.automovel_crud import AutomovelCRUD
-from sqlalchemy.exc import IntegrityError
-
-NUM_VEICULOS_TO_GENERATE = 120
+engine = create_async_engine(settings.database_url, echo=True)
+AsyncSessionLocal = sessionmaker(
+    autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
+)
 
 fake = Faker('pt_BR')
-fake.add_provider(automotive)
-fake.add_provider(color)
+fake.add_provider(VehicleProvider) # <--- Adiciona o provedor de veículos
+
+def generate_fake_automovel_data(num_automoveis: int) -> List[Automovel]:
+    automoveis = []
+    for _ in range(num_automoveis):
+        ano = fake.random_int(min=1990, max=datetime.now().year + 1) # Adicionado +1 para incluir o ano atual
+
+        tipos_combustivel = ["Gasolina", "Etanol", "Diesel", "Flex", "Elétrico", "Híbrido"]
+        tipo_combustivel = fake.random_element(elements=tipos_combustivel)
+
+        letras = ''.join(fake.random_letters(length=3)).upper()
+        numeros = str(fake.random_int(min=0, max=9))
+        mercosul_num = str(fake.random_int(min=0, max=9))
+        final_numeros = str(fake.random_int(min=0, max=99)).zfill(2) # Garante 2 dígitos
+        placa = f"{letras}-{numeros}{mercosul_num}{final_numeros}"
+
+        automoveis.append(
+            Automovel(
+                marca=fake.vehicle_make(),
+                modelo=fake.vehicle_model(),
+                ano=ano,
+                cor=fake.color_name(),
+                tipo_combustivel=tipo_combustivel,
+                quilometragem=fake.random_int(min=0, max=200000),
+                numero_portas=fake.random_element(elements=[2, 4]),
+                placa=placa,
+                chassi=fake.vin(),
+                codigo_fipe=str(fake.random_int(min=100000, max=999999))
+            )
+        )
+    return automoveis
 
 
-def generate_fipe_code():
-    """Gera um código FIPE simulado no formato D+DDDDD-D."""
-    group1 = str(random.randint(0, 999)).zfill(3)
-    group2 = str(random.randint(0, 999)).zfill(3)
-    last_digit = str(random.randint(0, 9))
-    return f"{group1}{group2}-{last_digit}"[:10]
+async def insert_fake_data(num_automoveis: int):
+    automoveis = generate_fake_automovel_data(num_automoveis)
+    async with AsyncSessionLocal() as session:
+        session.add_all(automoveis)
+        await session.commit()
+    print(f"Inseridos {num_automoveis} veículos falsos no banco de dados.")
 
-def generate_chassi():
-    chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    return ''.join(random.choices(chars, k=17))
-
-def get_random_enum_value(enum_class):
-    return random.choice(list(enum_class)).value
-
-def generate_automovel_create_data() -> AutomovelCreate:
-    data = {
-        "marca": fake.vehicle_make(),
-        "modelo": fake.vehicle_model(),
-        "ano": random.randint(1990, datetime.now().year + 1),
-        "cor": fake.color_name(),
-        "tipo_combustivel": get_random_enum_value(TipoCombustivel),
-        "quilometragem": round(random.uniform(0.0, 300000.0), 2),
-        "numero_portas": random.choice([2, 4, 5]),
-        "placa": fake.license_plate() if random.random() > 0.1 else None,
-        "chassi": generate_chassi(),
-        "codigo_fipe": generate_fipe_code(),
-    }
-    return AutomovelCreate(**data)
-
-async def seed_automoveis_data(num_veiculos: int):
-    """
-    Popula a tabela de automóveis com dados fake.
-    """
-    print(f"Iniciando a inserção de {num_veiculos} veículos falsos.")
-    inserted_count = 0
-    attempts = 0
-    max_attempts_per_vehicle = 5 # Tive que criar essa tentativa para o caso de vir chassi ou placa duplicados.
-
-    async for db_session in get_db_session():
-        crud = AutomovelCRUD(db_session)
-        while inserted_count < num_veiculos and attempts < num_veiculos * max_attempts_per_vehicle:
-            attempts += 1
-            try:
-                automovel_data = generate_automovel_create_data()
-                await crud.create_automovel(automovel_data)
-                inserted_count += 1
-                if inserted_count % 10 == 0:
-                    print(f"  -> Inseridos {inserted_count} veículos até agora...")
-            except IntegrityError as e:
-                print(f"  Erro de integridade (provável chassi/placa duplicado): {e}. Tentando novamente com novo dado...")
-                await db_session.rollback()
-            except Exception as e:
-                print(f"  Ocorreu um erro inesperado: {e}")
-                await db_session.rollback()
-                break
-
-        break
-
-    print(f"\nConcluída a inserção. Total de {inserted_count} veículos inseridos com sucesso.")
-    if inserted_count < num_veiculos:
-        print(f"Atenção: Não foi possível inserir o número total desejado de veículos ({num_veiculos}).")
-
+# --- Execução Principal ---
+async def main():
+    try:
+        print(f"Iniciando a inserção de {120} veículos falsos.")
+        await insert_fake_data(120)
+        print("Operação de seed concluída com sucesso!")
+    except Exception as e:
+        print(f"Ocorreu um erro inesperado: {e}")
 
 if __name__ == "__main__":
-    asyncio.run(seed_automoveis_data(NUM_VEICULOS_TO_GENERATE))
+    asyncio.run(main())
