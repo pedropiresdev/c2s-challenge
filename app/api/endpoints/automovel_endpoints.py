@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.schemas.automovel_schemas import AutomovelCreate, AutomovelUpdate, AutomovelInDataBase, TipoCombustivel
+from app.schemas.automovel_schemas import AutomovelCreate, AutomovelUpdate, AutomovelInDataBase, TipoCombustivel, \
+    AutomovelFilter
 from app.view.automovel_crud import AutomovelCRUD
 from app.repository.connection import get_db_session
 
@@ -19,10 +20,19 @@ async def create_automovel_endpoint(
 
 @router.get("/", response_model=List[AutomovelInDataBase])
 async def read_automoveis_endpoint(
+    # Agora aceita um objeto AutomovelFilter como parâmetro de consulta
+    filters: AutomovelFilter = Depends(),
     db_session: AsyncSession = Depends(get_db_session)
 ):
+    """
+    Retorna uma lista de automóveis, com a opção de aplicar filtros.
+    Exemplos de uso:
+    - /automoveis/?marca=Toyota
+    - /automoveis/?ano_min=2020&quilometragem_max=50000
+    - /automoveis/?tipo_combustivel=Gasolina
+    """
     crud = AutomovelCRUD(db_session)
-    return await crud.get_all_automoveis()
+    return await crud.get_all_automoveis(filters=filters)
 
 @router.get("/{automovel_id}", response_model=AutomovelInDataBase)
 async def read_automovel_endpoint(
