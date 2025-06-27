@@ -1,9 +1,8 @@
-# your_fastapi_project/crud/automovel_crud.py
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete, text # Adicionado 'text'
-from schemas.automovel_schemas import AutomovelCreate, AutomovelUpdate, AutomovelInDataBase, AutomovelFilter, TipoCombustivel
-from database.models import Automovel # Importa o modelo ORM do SQLAlchemy
+from sqlalchemy import select, update, delete, text
+from app.schemas.automovel_schemas import AutomovelCreate, AutomovelUpdate, AutomovelInDataBase, AutomovelFilter, TipoCombustivel
+from app.repository.models.automovel import Automovel
 
 class AutomovelCRUD:
     def __init__(self, db_session: AsyncSession):
