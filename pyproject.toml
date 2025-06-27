@@ -1,9 +1,12 @@
 [project]
 name = "c2s-challenge"
 version = "0.1.0"
-description = "Add your description here"
+description = "Uma API de gerenciamento de automóveis"
+authors = [
+    { name = "Pedro Pires", email = "pedropires.py@gmail.com" }
+]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11,<3.14"
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
@@ -12,4 +15,16 @@ dependencies = [
     "sqlalchemy",
     "asyncpg",
     "Faker",
+    "rich",
+    "langchain",
+    "langchain_community",
+    "langchain-google-genai",
+    "google-generativeai",
+    "python-dotenv",
+    "httpx",
+    "faker-vehicle",
 ]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
