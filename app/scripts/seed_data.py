@@ -1,7 +1,4 @@
-# your_fastapi_project/scripts/seed_data.py
-
 import asyncio
-import os
 from datetime import datetime
 from typing import List
 from faker import Faker
@@ -18,12 +15,12 @@ AsyncSessionLocal = sessionmaker(
 )
 
 fake = Faker('pt_BR')
-fake.add_provider(VehicleProvider) # <--- Adiciona o provedor de veículos
+fake.add_provider(VehicleProvider)
 
 def generate_fake_automovel_data(num_automoveis: int) -> List[Automovel]:
     automoveis = []
     for _ in range(num_automoveis):
-        ano = fake.random_int(min=1990, max=datetime.now().year + 1) # Adicionado +1 para incluir o ano atual
+        ano = fake.random_int(min=1990, max=datetime.now().year + 1)
 
         tipos_combustivel = ["Gasolina", "Etanol", "Diesel", "Flex", "Elétrico", "Híbrido"]
         tipo_combustivel = fake.random_element(elements=tipos_combustivel)
@@ -31,7 +28,7 @@ def generate_fake_automovel_data(num_automoveis: int) -> List[Automovel]:
         letras = ''.join(fake.random_letters(length=3)).upper()
         numeros = str(fake.random_int(min=0, max=9))
         mercosul_num = str(fake.random_int(min=0, max=9))
-        final_numeros = str(fake.random_int(min=0, max=99)).zfill(2) # Garante 2 dígitos
+        final_numeros = str(fake.random_int(min=0, max=99)).zfill(2)
         placa = f"{letras}-{numeros}{mercosul_num}{final_numeros}"
 
         automoveis.append(
@@ -58,7 +55,6 @@ async def insert_fake_data(num_automoveis: int):
         await session.commit()
     print(f"Inseridos {num_automoveis} veículos falsos no banco de dados.")
 
-# --- Execução Principal ---
 async def main():
     try:
         print(f"Iniciando a inserção de {120} veículos falsos.")
