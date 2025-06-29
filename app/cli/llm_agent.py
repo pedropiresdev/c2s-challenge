@@ -56,14 +56,11 @@ class AutomovelAPIClient:
 
 api_client = AutomovelAPIClient()
 
-# --- ATENÇÃO AQUI: Como a Tool lida com funções assíncronas ---
-# Ao usar Tool com uma função assíncrona, LangChain a aguardará automaticamente
-# se o executor do agente for assíncrono (como é o caso de AgentExecutor com ainvoke).
 tools = [
     Tool(
         name="consultar_automoveis",
-        func=lambda filters: asyncio.run(api_client.get_automoveis(filters)), # Wrapper síncrono para func (não recomendado para ambiente async)
-        coroutine_func=api_client.get_automoveis, # <--- Esta é a forma correta para funções assíncronas em AsyncTool ou Tool mais recentes
+        func=lambda filters: asyncio.run(api_client.get_automoveis(filters)), # Wrapper síncrono para func
+        coroutine_func=api_client.get_automoveis,
         description="""Útil para consultar automóveis no estoque.
         Use esta ferramenta para encontrar veículos com base em filtros como marca, modelo, ano (min/max),
         tipo de combustível, quilometragem máxima, número de portas, placa parcial, ou código FIPE.
@@ -77,7 +74,7 @@ tools = [
     )
 ]
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro", temperature=0.7) # Mantenha o modelo que funciona para você
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro", temperature=0.7)
 
 template = """
 Você é um assistente virtual especializado em automóveis de uma concessionária.

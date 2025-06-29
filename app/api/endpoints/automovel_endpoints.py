@@ -9,7 +9,6 @@ from app.repository.connection import get_db_session
 router = APIRouter()
 
 # O Depends(get_db_session) injeta uma sessão de DB para cada requisição
-# E o CRUD é instanciado com essa sessão
 @router.post("/", response_model=AutomovelInDataBase, status_code=status.HTTP_201_CREATED)
 async def create_automovel_endpoint(
     automovel: AutomovelCreate,
@@ -20,7 +19,6 @@ async def create_automovel_endpoint(
 
 @router.get("/", response_model=List[AutomovelInDataBase])
 async def read_automoveis_endpoint(
-    # Agora aceita um objeto AutomovelFilter como parâmetro de consulta
     filters: AutomovelFilter = Depends(),
     db_session: AsyncSession = Depends(get_db_session)
 ):

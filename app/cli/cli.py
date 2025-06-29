@@ -17,7 +17,7 @@ console = Console()
 
 async def main_cli():
     console.print(Panel("[bold green]Bem-vindo ao Assistente de Automóveis Virtual![/bold green]",
-                        subtitle="Impulsionado por IA e seus dados!"))
+                        subtitle="Impulsionado por IA."))
     console.print("Deseja consultar os veículos disponíveis?")
     console.print("Para sair, digite 'sair'.\n")
 
