@@ -11,16 +11,31 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class AutomovelFilterToolSchema(BaseModel):
     marca: Optional[str] = Field(None, description="Marca do automóvel.")
     modelo: Optional[str] = Field(None, description="Modelo específico do automóvel.")
-    ano_min: Optional[int] = Field(None, description="Ano mínimo de fabricação (ex: 2010).")
-    ano_max: Optional[int] = Field(None, description="Ano máximo de fabricação (ex: 2023).")
-    tipo_combustivel: Optional[str] = Field(None, description="Tipo de combustível (Gasolina, Etanol, Diesel, Flex, Elétrico, Híbrido).")
-    quilometragem_max: Optional[float] = Field(None, description="Quilometragem máxima.")
-    numero_portas: Optional[int] = Field(None, description="Número de portas (ex: 2, 4, 5).")
-    placa_parcial: Optional[str] = Field(None, description="Parte da placa para busca (ex: ABC).")
+    ano_min: Optional[int] = Field(
+        None, description="Ano mínimo de fabricação (ex: 2010)."
+    )
+    ano_max: Optional[int] = Field(
+        None, description="Ano máximo de fabricação (ex: 2023)."
+    )
+    tipo_combustivel: Optional[str] = Field(
+        None,
+        description="Tipo de combustível (Gasolina, Etanol, Diesel, Flex, Elétrico, Híbrido).",
+    )
+    quilometragem_max: Optional[float] = Field(
+        None, description="Quilometragem máxima."
+    )
+    numero_portas: Optional[int] = Field(
+        None, description="Número de portas (ex: 2, 4, 5)."
+    )
+    placa_parcial: Optional[str] = Field(
+        None, description="Parte da placa para busca (ex: ABC)."
+    )
     codigo_fipe: Optional[str] = Field(None, description="Código FIPE do automóvel.")
+
 
 class AutomovelAPIClient:
     def __init__(self, base_url: str = "http://127.0.0.1:8000"):
@@ -31,7 +46,9 @@ class AutomovelAPIClient:
         params = eval(filters) if isinstance(filters, str) else filters
         # params = filters.model_dump(exclude_none=True)
         try:
-            response = await self.client.get(f"{self.base_url}/automoveis/", params=params)
+            response = await self.client.get(
+                f"{self.base_url}/automoveis/", params=params
+            )
             breakpoint()
             response.raise_for_status()
             automoveis = response.json()
@@ -44,7 +61,15 @@ class AutomovelAPIClient:
                         f"KM: {auto['quilometragem']}, Portas: {auto['numero_portas']}, Placa: {auto['placa'] or 'N/A'}, "
                         f"Chassi: {auto['chassi']}, FIPE: {auto['codigo_fipe']}"
                     )
-                return "Resultados encontrados:\n" + "\n".join(formatted_results) + (f"\n...e mais {len(automoveis) - 5} resultados." if len(automoveis) > 5 else "")
+                return (
+                    "Resultados encontrados:\n"
+                    + "\n".join(formatted_results)
+                    + (
+                        f"\n...e mais {len(automoveis) - 5} resultados."
+                        if len(automoveis) > 5
+                        else ""
+                    )
+                )
             else:
                 return "Nenhum automóvel encontrado com os filtros fornecidos."
         except httpx.RequestError as exc:
@@ -54,12 +79,15 @@ class AutomovelAPIClient:
         except Exception as e:
             return f"Erro inesperado ao consultar automóveis: {e}"
 
+
 api_client = AutomovelAPIClient()
 
 tools = [
     Tool(
         name="consultar_automoveis",
-        func=lambda filters: asyncio.run(api_client.get_automoveis(filters)), # Wrapper síncrono para func
+        func=lambda filters: asyncio.run(
+            api_client.get_automoveis(filters)
+        ),  # Wrapper síncrono para func
         coroutine_func=api_client.get_automoveis,
         description="""Útil para consultar automóveis no estoque.
         Use esta ferramenta para encontrar veículos com base em filtros como marca, modelo, ano (min/max),
@@ -70,7 +98,7 @@ tools = [
         quilometragem_max, numero_portas, placa_parcial, codigo_fipe.
         Para tipo_combustivel, os valores válidos são: Gasolina, Etanol, Diesel, Flex, Elétrico, Híbrido.
         """,
-        args_schema=AutomovelFilterToolSchema
+        args_schema=AutomovelFilterToolSchema,
     )
 ]
 
@@ -110,7 +138,10 @@ prompt = PromptTemplate.from_template(template)
 
 
 agent = create_react_agent(llm, tools, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True, handle_parsing_errors=True)
+agent_executor = AgentExecutor(
+    agent=agent, tools=tools, verbose=True, handle_parsing_errors=True
+)
+
 
 async def run_agent(input_text: str) -> str:
     response = await agent_executor.ainvoke({"input": input_text})

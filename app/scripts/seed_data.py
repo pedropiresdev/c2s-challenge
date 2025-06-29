@@ -14,18 +14,26 @@ AsyncSessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
 )
 
-fake = Faker('pt_BR')
+fake = Faker("pt_BR")
 fake.add_provider(VehicleProvider)
+
 
 def generate_fake_automovel_data(num_automoveis: int) -> List[Automovel]:
     automoveis = []
     for _ in range(num_automoveis):
         ano = fake.random_int(min=1990, max=datetime.now().year + 1)
 
-        tipos_combustivel = ["Gasolina", "Etanol", "Diesel", "Flex", "Elétrico", "Híbrido"]
+        tipos_combustivel = [
+            "Gasolina",
+            "Etanol",
+            "Diesel",
+            "Flex",
+            "Elétrico",
+            "Híbrido",
+        ]
         tipo_combustivel = fake.random_element(elements=tipos_combustivel)
 
-        letras = ''.join(fake.random_letters(length=3)).upper()
+        letras = "".join(fake.random_letters(length=3)).upper()
         numeros = str(fake.random_int(min=0, max=9))
         mercosul_num = str(fake.random_int(min=0, max=9))
         final_numeros = str(fake.random_int(min=0, max=99)).zfill(2)
@@ -42,7 +50,7 @@ def generate_fake_automovel_data(num_automoveis: int) -> List[Automovel]:
                 numero_portas=fake.random_element(elements=[2, 4]),
                 placa=placa,
                 chassi=fake.vin(),
-                codigo_fipe=str(fake.random_int(min=100000, max=999999))
+                codigo_fipe=str(fake.random_int(min=100000, max=999999)),
             )
         )
     return automoveis
@@ -55,6 +63,7 @@ async def insert_fake_data(num_automoveis: int):
         await session.commit()
     print(f"Inseridos {num_automoveis} veículos falsos no banco de dados.")
 
+
 async def main():
     try:
         print(f"Iniciando a inserção de {120} veículos falsos.")
@@ -62,6 +71,7 @@ async def main():
         print("Operação de seed concluída com sucesso!")
     except Exception as e:
         print(f"Ocorreu um erro inesperado: {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

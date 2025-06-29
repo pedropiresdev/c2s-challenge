@@ -7,10 +7,13 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 if not GOOGLE_API_KEY:
-    print("Erro: GOOGLE_API_KEY não encontrada no arquivo .env. Certifique-se de que está definida.")
+    print(
+        "Erro: GOOGLE_API_KEY não encontrada no arquivo .env. Certifique-se de que está definida."
+    )
     exit()
 
 genai.configure(api_key=GOOGLE_API_KEY)
+
 
 async def list_gemini_models():
     #! Esse método foi gerado por IA
@@ -28,6 +31,8 @@ async def list_gemini_models():
         print(f"Erro ao listar modelos: {e}")
         print("Verifique se sua GOOGLE_API_KEY está correta e tem permissões.")
 
+
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(list_gemini_models())
