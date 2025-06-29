@@ -8,6 +8,10 @@ Código de desafio técnico realizado para a C2S
 
 ### Executar o client do agente virtual
         python cli/cli.py
+
+### Configurar Pré Commit
+      uv pip install pre-commit
+      pre-commit install
         
 ## Rodar testes
 1. Solicite busca de veículos

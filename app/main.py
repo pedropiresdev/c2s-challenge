@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from app.api.endpoints import automovel_endpoints
 
 app = FastAPI(

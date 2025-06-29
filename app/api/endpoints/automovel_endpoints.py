@@ -1,15 +1,13 @@
-from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.schemas.automovel_schemas import (
-    AutomovelCreate,
-    AutomovelUpdate,
-    AutomovelInDataBase,
-    TipoCombustivel,
-    AutomovelFilter,
-)
-from app.view.automovel_crud import AutomovelCRUD
+
 from app.repository.connection import get_db_session
+from app.schemas.automovel_schemas import (AutomovelCreate, AutomovelFilter,
+                                           AutomovelInDataBase,
+                                           AutomovelUpdate, TipoCombustivel)
+from app.view.automovel_crud import AutomovelCRUD
 
 router = APIRouter()
 

@@ -1,22 +1,25 @@
-import pytest
 import asyncio
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+import os
+import sys
+
+import pytest
+import pytest_asyncio
+from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
+                                    create_async_engine)
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-import pytest_asyncio
-import sys
-import os
 
 from app.core.config import AppSettings, settings
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from fastapi.testclient import TestClient
+
+from app.main import app
 from app.repository.connection import Base, get_db_session
 from app.repository.models.automovel import Automovel
-from app.main import app
-from app.view.automovel_crud import AutomovelCRUD
 from app.schemas.automovel_schemas import AutomovelCreate, TipoCombustivel
-from fastapi.testclient import TestClient
+from app.view.automovel_crud import AutomovelCRUD
 
 
 @pytest_asyncio.fixture(name="test_engine", scope="session")

@@ -1,10 +1,8 @@
 import pytest
+
+from app.schemas.automovel_schemas import (AutomovelCreate, AutomovelUpdate,
+                                           TipoCombustivel)
 from app.view.automovel_crud import AutomovelCRUD
-from app.schemas.automovel_schemas import (
-    AutomovelCreate,
-    AutomovelUpdate,
-    TipoCombustivel,
-)
 
 
 @pytest.mark.asyncio

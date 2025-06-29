@@ -1,15 +1,14 @@
 import asyncio
-import sys
 import os
+import sys
 
 # Tive que adicionar o diretório raiz do projeto ao PATH para que as importações funcionem devido exception que estava
 # ocorrendo dos imports. Essa solução veio de IA.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app.repository.connection import engine, Base
-from app.repository.models.automovel import (
-    Automovel,
-)  # Tive que importar para o Base.metada conseguir encontrar
+from app.repository.connection import Base, engine
+from app.repository.models.automovel import \
+    Automovel  # Tive que importar para o Base.metada conseguir encontrar
 
 
 async def create_db_and_tables():

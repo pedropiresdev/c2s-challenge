@@ -1,9 +1,10 @@
 import asyncio
 from datetime import datetime
 from typing import List
+
 from faker import Faker
 from faker_vehicle import VehicleProvider
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings

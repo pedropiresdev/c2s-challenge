@@ -1,14 +1,12 @@
 from typing import List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from sqlalchemy import select
-from app.schemas.automovel_schemas import (
-    AutomovelCreate,
-    AutomovelUpdate,
-    AutomovelInDataBase,
-    AutomovelFilter,
-    TipoCombustivel,
-)
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.repository.models.automovel import Automovel
+from app.schemas.automovel_schemas import (AutomovelCreate, AutomovelFilter,
+                                           AutomovelInDataBase,
+                                           AutomovelUpdate, TipoCombustivel)
 
 
 class AutomovelCRUD:

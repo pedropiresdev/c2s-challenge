@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Float, Enum, DateTime
+from sqlalchemy import Column, DateTime, Enum, Float, Integer, String
 from sqlalchemy.sql import func
+
 from app.repository.connection import Base
 from app.schemas.automovel_schemas import TipoCombustivel
 

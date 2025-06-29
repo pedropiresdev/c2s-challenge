@@ -1,7 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
-from app.schemas.automovel_schemas import AutomovelCreate, TipoCombustivel
+
 from app.main import app
+from app.schemas.automovel_schemas import AutomovelCreate, TipoCombustivel
 
 
 @pytest.mark.asyncio
