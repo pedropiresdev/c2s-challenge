@@ -20,7 +20,7 @@ class AutomovelBase(BaseModel):
     tipo_combustivel: TipoCombustivel = Field(..., example=TipoCombustivel.FLEX, description="Tipo de combustível que o automóvel utiliza.")
     quilometragem: float = Field(..., ge=0, example=50000.5, description="Quilometragem atual do automóvel.")
     numero_portas: int = Field(..., ge=2, le=5, example=4, description="Número de portas do automóvel (ex: 2, 3, 4, 5).")
-    placa: Optional[str] = Field(None, pattern=r"^[A-Z]{3}\d{1}[A-Z\d]{2}\d{1}$", example="ABC1D23", description="Placa do automóvel (formato Mercosul ou antigo). Opcional.")
+    placa: Optional[str] = Field(None, pattern=r"^[A-Z]{3}[ -]?\d[A-Z\d]?\d{2}$", example="ABC1D23", description="Placa do automóvel (formato Mercosul ou antigo). Opcional.")
     chassi: str = Field(..., pattern=r"^[0-9A-Z]{17}$", example="9BWZZZ5X0JP000001", description="Número de chassi do automóvel (17 caracteres alfanuméricos).")
     codigo_fipe: str = Field(..., min_length=6, max_length=10, example="005370-1", description="Código FIPE do automóvel.")
 
@@ -36,7 +36,7 @@ class AutomovelUpdate(AutomovelBase):
     tipo_combustivel: Optional[TipoCombustivel] = Field(None, example=TipoCombustivel.GASOLINA, description="Tipo de combustível que o automóvel utiliza.")
     quilometragem: Optional[float] = Field(None, ge=0, example=60000.0, description="Quilometragem atual do automóvel.")
     numero_portas: Optional[int] = Field(None, ge=2, le=5, example=4, description="Número de portas do automóvel.")
-    placa: Optional[str] = Field(None, pattern=r"^[A-Z]{3}\d{1}[A-Z\d]{2}\d{1}$", example="XYZ9A87", description="Placa do automóvel (formato Mercosul ou antigo).")
+    placa: Optional[str] = Field(None, pattern=r"^[A-Z]{3}[ -]?\d[A-Z\d]?\d{2}$", example="XYZ9A87", description="Placa do automóvel (formato Mercosul ou antigo).")
     chassi: Optional[str] = Field(None, pattern=r"^[0-9A-Z]{17}$", example="9BWZZZ5X0JP000002", description="Número de chassi do automóvel (17 caracteres alfanuméricos).")
     codigo_fipe: Optional[str] = Field(None, min_length=6, max_length=10, example="005370-2", description="Código FIPE do automóvel.")
 
