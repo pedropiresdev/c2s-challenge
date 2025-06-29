@@ -46,15 +46,14 @@ async def test_db_session_fixture(test_engine):
     await session.close()
 
 
-# --- CORREÇÃO AQUI ---
 @pytest_asyncio.fixture(name="override_get_db_session", scope="function")
 @pytest.mark.asyncio
 async def override_get_db_session_fixture(test_db_session: AsyncSession):
     """
     Sobrescreve a dependência get_db_session do FastAPI para usar a sessão de teste.
-    Esta é a CORREÇÃO: produz a sessão de teste como um gerador assíncrono.
+    Deve produzir a sessão de teste como um gerador assíncrono.
     """
-    yield test_db_session # Já é a sessão de teste real, então produz ela.
+    yield test_db_session
 
 
 @pytest.fixture(name="test_client", scope="function")
@@ -62,8 +61,6 @@ def test_client_fixture(override_get_db_session):
     """
     Cria um cliente de teste FastAPI com a dependência de DB sobrescrita.
     """
-    # A lambda agora é um gerador assíncrono simples que produz a sessão real.
-    # O FastAPI chamará e aguardará esta função para obter a sessão.
     async def _get_test_db():
         yield override_get_db_session
 
@@ -74,7 +71,7 @@ def test_client_fixture(override_get_db_session):
 
 @pytest_asyncio.fixture(name="automovel_crud", scope="function")
 @pytest.mark.asyncio
-async def automovel_crud_fixture(test_db_session: AsyncSession): # Certifique-se de que é AsyncSession
+async def automovel_crud_fixture(test_db_session: AsyncSession):
     return AutomovelCRUD(test_db_session)
 
 @pytest.fixture(name="sample_automovel_data")

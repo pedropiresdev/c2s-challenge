@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel, Field
-from typing import Optional, List # Adicionado List
+from typing import Optional
 from enum import Enum
 
 class TipoCombustivel(str, Enum):

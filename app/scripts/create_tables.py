@@ -1,10 +1,9 @@
 import asyncio
-from sqlalchemy.exc import ProgrammingError
 import sys
 import os
 
 # Tive que adicionar o diretório raiz do projeto ao PATH para que as importações funcionem devido exception que estava
-# ocorrendo. Essa solução veio de IA.
+# ocorrendo dos imports. Essa solução veio de IA.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from app.repository.connection import engine, Base

@@ -13,12 +13,11 @@ if not GOOGLE_API_KEY:
 genai.configure(api_key=GOOGLE_API_KEY)
 
 async def list_gemini_models():
+    #! Esse método foi gerado por IA
     """Lista os modelos Gemini disponíveis e suas capacidades."""
     print("Listando modelos Gemini disponíveis na sua conta...")
     try:
         for model in genai.list_models():
-            # Filtra apenas modelos que suportam geração de conteúdo (como texto e chat)
-            # e que não sejam apenas para embedding, etc.
             if "generateContent" in model.supported_generation_methods:
                 print(f"Nome do Modelo: {model.name}")
                 print(f"  Display Name: {model.display_name}")

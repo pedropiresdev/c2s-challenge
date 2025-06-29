@@ -1,6 +1,6 @@
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete, text
+from sqlalchemy import select
 from app.schemas.automovel_schemas import AutomovelCreate, AutomovelUpdate, AutomovelInDataBase, AutomovelFilter, TipoCombustivel
 from app.repository.models.automovel import Automovel
 
