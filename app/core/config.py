@@ -8,7 +8,7 @@ load_dotenv()
 
 class AppSettings(BaseSettings):
     DATABASE_URL: str = os.getenv("DATABASE_URL")
-    MODEL_CONFIG: dict = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config: dict = SettingsConfigDict(env_file=".env", extra="ignore")
     DATABASE_URL_TEST: str = "sqlite+aiosqlite:///:memory:"
 
 

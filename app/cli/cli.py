@@ -1,17 +1,15 @@
 import asyncio
 import os
 import sys
-import time
 
 from rich.console import Console
 from rich.live import Live
 from rich.panel import Panel
-from rich.table import Table
 from rich.text import Text
 
-from app.cli.llm_agent import run_agent
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+from app.cli.llm_agent import run_agent
 
 
 console = Console()

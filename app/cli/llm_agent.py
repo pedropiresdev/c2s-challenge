@@ -1,17 +1,15 @@
-import asyncio
 import os
-from typing import Any, Dict, List, Optional
-
 import httpx
-from dotenv import load_dotenv
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import AgentExecutor, create_react_agent
+from langchain_core.tools import Tool
 from langchain_core.prompts import PromptTemplate
 from langchain_core.pydantic_v1 import BaseModel, Field
-from langchain_core.tools import Tool
-from langchain_google_genai import ChatGoogleGenerativeAI
+from typing import Optional, List, Dict, Any
+import asyncio
+from dotenv import load_dotenv
 
 load_dotenv()
-
 
 class AutomovelFilterToolSchema(BaseModel):
     marca: Optional[str] = Field(None, description="Marca do automóvel.")

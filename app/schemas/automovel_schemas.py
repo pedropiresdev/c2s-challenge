@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class TipoCombustivel(str, Enum):
@@ -61,6 +61,7 @@ class AutomovelBase(BaseModel):
         example="005370-1",
         description="Código FIPE do automóvel.",
     )
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class AutomovelCreate(AutomovelBase):
@@ -114,6 +115,7 @@ class AutomovelUpdate(AutomovelBase):
         example="005370-2",
         description="Código FIPE do automóvel.",
     )
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class AutomovelInDataBase(AutomovelBase):
@@ -126,8 +128,7 @@ class AutomovelInDataBase(AutomovelBase):
         description="Data e hora da criação do dado no banco.",
     )
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(arbitrary_types_allowed=True, from_attributes=True)
 
 
 class AutomovelFilter(BaseModel):
@@ -155,5 +156,4 @@ class AutomovelFilter(BaseModel):
     )
     codigo_fipe: Optional[str] = Field(None, description="Filtrar por código FIPE.")
 
-    class Config:
-        use_enum_values = True
+    model_config = ConfigDict(arbitrary_types_allowed=True, use_enum_values=True)
