@@ -50,7 +50,6 @@ class AutomovelAPIClient:
             response = await self.client.get(
                 f"{self.base_url}/automoveis/", params=params
             )
-            breakpoint()
             response.raise_for_status()
             automoveis = response.json()
             if automoveis:
