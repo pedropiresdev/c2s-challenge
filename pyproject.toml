@@ -6,7 +6,7 @@ authors = [
     { name = "Pedro Pires", email = "pedropires.py@gmail.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.11,<3.14"
+requires-python = "==3.11.13"
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
@@ -23,7 +23,12 @@ dependencies = [
     "python-dotenv",
     "httpx",
     "faker-vehicle",
+    # Dependências de teste
+    "pytest",
+    "pytest-asyncio",
+    "aiosqlite",
 ]
+
 
 [build-system]
 requires = ["setuptools>=61.0"]
