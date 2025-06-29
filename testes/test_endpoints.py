@@ -12,7 +12,7 @@ async def test_create_automovel_endpoint(test_client: TestClient):
         "modelo": "HB20",
         "ano": 2023,
         "cor": "Branco",
-        "tipo_combustivel": "Flex", # Enums devem ser passados como strings aqui
+        "tipo_combustivel": "Flex",
         "quilometragem": 100.0,
         "numero_portas": 4,
         "placa": "XYZ1A23",

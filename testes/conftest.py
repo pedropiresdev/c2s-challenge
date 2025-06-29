@@ -3,11 +3,11 @@ import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-
+import pytest_asyncio
 import sys
 import os
 
-from app.core.config import AppSettings
+from app.core.config import AppSettings, settings
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -18,11 +18,10 @@ from app.view.automovel_crud import AutomovelCRUD
 from app.schemas.automovel_schemas import AutomovelCreate, TipoCombustivel
 from fastapi.testclient import TestClient
 
-
-@pytest.fixture(name="test_engine", scope="session")
+@pytest_asyncio.fixture(name="test_engine", scope="session")
 async def test_engine_fixture():
     engine = create_async_engine(
-        AppSettings.DATABASE_URL_TEST,
+        settings.DATABASE_URL_TEST,
         echo=False,
         poolclass=StaticPool
     )
@@ -33,46 +32,53 @@ async def test_engine_fixture():
         await conn.run_sync(Base.metadata.drop_all)
     await engine.dispose()
 
-@pytest.fixture(name="test_db_session", scope="function")
+@pytest_asyncio.fixture(name="test_db_session", scope="function")
 async def test_db_session_fixture(test_engine):
-    """
-    Cria uma sessão de banco de dados para cada teste,
-    garantindo que o banco esteja limpo antes de cada teste.
-    """
     async_session = async_sessionmaker(
         test_engine,
         expire_on_commit=False,
         class_=AsyncSession
     )
-    async with async_session() as session:
-        yield session
-        await session.rollback()
+    # Abre a sessão aqui
+    session = async_session()
+    yield session
+    await session.rollback()
+    await session.close()
 
-@pytest.fixture(name="override_get_db_session", scope="function")
-async def override_get_db_session_fixture(test_db_session):
+
+# --- CORREÇÃO AQUI ---
+@pytest_asyncio.fixture(name="override_get_db_session", scope="function")
+@pytest.mark.asyncio
+async def override_get_db_session_fixture(test_db_session: AsyncSession):
     """
     Sobrescreve a dependência get_db_session do FastAPI para usar a sessão de teste.
+    Esta é a CORREÇÃO: produz a sessão de teste como um gerador assíncrono.
     """
-    yield test_db_session
+    yield test_db_session # Já é a sessão de teste real, então produz ela.
+
 
 @pytest.fixture(name="test_client", scope="function")
 def test_client_fixture(override_get_db_session):
     """
     Cria um cliente de teste FastAPI com a dependência de DB sobrescrita.
     """
-    app.dependency_overrides[get_db_session] = lambda: override_get_db_session
+    # A lambda agora é um gerador assíncrono simples que produz a sessão real.
+    # O FastAPI chamará e aguardará esta função para obter a sessão.
+    async def _get_test_db():
+        yield override_get_db_session
+
+    app.dependency_overrides[get_db_session] = _get_test_db # <--- Alteração aqui
     with TestClient(app) as client:
         yield client
     app.dependency_overrides = {}
 
-@pytest.fixture(name="automovel_crud", scope="function")
-async def automovel_crud_fixture(test_db_session):
-    """Fornece uma instância do AutomovelCRUD com a sessão de teste."""
+@pytest_asyncio.fixture(name="automovel_crud", scope="function")
+@pytest.mark.asyncio
+async def automovel_crud_fixture(test_db_session: AsyncSession): # Certifique-se de que é AsyncSession
     return AutomovelCRUD(test_db_session)
 
 @pytest.fixture(name="sample_automovel_data")
 def sample_automovel_data_fixture():
-    """Fornece dados de exemplo para criação de automóveis."""
     return AutomovelCreate(
         marca="Chevrolet",
         modelo="Onix",
