@@ -102,7 +102,7 @@ Esta é a maneira mais fácil e consistente de rodar a aplicação completa (API
     Para iniciar o agente CLI:
 
     ```bash
-    docker compose exec -it app python app/cli/cli.py
+    docker compose exec -it app python -m app.cli.cli
     ```
     * `exec -it app`: Executa o comando no contêiner `app` de forma interativa.
 
