@@ -6,7 +6,7 @@ from app.main import app
 
 @pytest.mark.asyncio
 async def test_create_automovel_endpoint(test_client: TestClient):
-    """Testa o endpoint POST /automoveis/ (criação)."""
+    """Testa o endpoint POST /automoveis/"""
     automovel_data = {
         "marca": "Hyundai",
         "modelo": "HB20",
@@ -30,7 +30,7 @@ async def test_create_automovel_endpoint(test_client: TestClient):
 
 @pytest.mark.asyncio
 async def test_get_all_automoveis_endpoint(test_client: TestClient):
-    """Testa o endpoint GET /automoveis/ (listagem sem filtros)."""
+    """Testa o endpoint GET /automoveis/"""
     # Cria alguns dados para testar a listagem
     automovel_data_1 = {
         "marca": "VW", "modelo": "Gol", "ano": 2020, "cor": "Vermelho",
@@ -71,21 +71,18 @@ async def test_get_automoveis_with_filters_endpoint(test_client: TestClient):
         "numero_portas": 4, "placa": "BMW1X24", "chassi": "CHAS0000000000003", "codigo_fipe": "006001-4"
     })
 
-    # Teste 1: Filtrar por marca
     response = test_client.get("/automoveis/?marca=Honda")
     assert response.status_code == 200
     filtered_automoveis = response.json()
     assert len(filtered_automoveis) == 2
     assert all(a["marca"] == "Honda" for a in filtered_automoveis)
 
-    # Teste 2: Filtrar por ano_min e tipo_combustivel
     response = test_client.get("/automoveis/?ano_min=2023&tipo_combustivel=Flex")
     assert response.status_code == 200
     filtered_automoveis = response.json()
     assert len(filtered_automoveis) == 1
     assert filtered_automoveis[0]["modelo"] == "HRV"
 
-    # Teste 3: Filtrar por quilometragem_max
     response = test_client.get("/automoveis/?quilometragem_max=12000")
     assert response.status_code == 200
     filtered_automoveis = response.json()
@@ -95,7 +92,7 @@ async def test_get_automoveis_with_filters_endpoint(test_client: TestClient):
 
 @pytest.mark.asyncio
 async def test_get_automovel_by_id_endpoint(test_client: TestClient):
-    """Testa o endpoint GET /automoveis/{id} (recuperação por ID)."""
+    """Testa o endpoint GET /automoveis/{id} """
     automovel_data = {
         "marca": "Nissan", "modelo": "Kicks", "ano": 2022, "cor": "Cinza",
         "tipo_combustivel": "Flex", "quilometragem": 30000.0,
@@ -110,14 +107,13 @@ async def test_get_automovel_by_id_endpoint(test_client: TestClient):
     assert fetched_automovel["id"] == automovel_id
     assert fetched_automovel["modelo"] == automovel_data["modelo"]
 
-    # Testar ID não encontrado
     response_not_found = test_client.get("/automoveis/99999")
     assert response_not_found.status_code == 404
     assert response_not_found.json() == {"detail": "Automóvel não encontrado"}
 
 @pytest.mark.asyncio
 async def test_update_automovel_endpoint(test_client: TestClient):
-    """Testa o endpoint PUT /automoveis/{id} (atualização)."""
+    """Testa o endpoint PUT /automoveis/{id} """
     automovel_data = {
         "marca": "Hyundai", "modelo": "Creta", "ano": 2023, "cor": "Branco",
         "tipo_combustivel": "Flex", "quilometragem": 5000.0,
@@ -134,13 +130,12 @@ async def test_update_automovel_endpoint(test_client: TestClient):
     assert updated_automovel["cor"] == "Vermelho"
     assert updated_automovel["quilometragem"] == 10000.0
 
-    # Testar atualização de ID não encontrado
     response_not_found = test_client.put("/automoveis/99999", json=update_data)
     assert response_not_found.status_code == 404
 
 @pytest.mark.asyncio
 async def test_delete_automovel_endpoint(test_client: TestClient):
-    """Testa o endpoint DELETE /automoveis/{id} (exclusão)."""
+    """Testa o endpoint DELETE /automoveis/{id} """
     automovel_data = {
         "marca": "Jeep", "modelo": "Renegade", "ano": 2021, "cor": "Verde",
         "tipo_combustivel": "Diesel", "quilometragem": 40000.0,
@@ -150,8 +145,7 @@ async def test_delete_automovel_endpoint(test_client: TestClient):
     automovel_id = create_response.json()["id"]
 
     response = test_client.delete(f"/automoveis/{automovel_id}")
-    assert response.status_code == 204 # 204 No Content
+    assert response.status_code == 204
 
-    # Tentar buscar o carro deletado para confirmar a exclusão
     response_get = test_client.get(f"/automoveis/{automovel_id}")
     assert response_get.status_code == 404
