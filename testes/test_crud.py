@@ -5,7 +5,6 @@ from app.schemas.automovel_schemas import AutomovelCreate, AutomovelUpdate, Tipo
 
 @pytest.mark.asyncio
 async def test_create_automovel(automovel_crud: AutomovelCRUD, sample_automovel_data: AutomovelCreate):
-    """Testa a criação de um automóvel."""
     created_automovel = await automovel_crud.create_automovel(sample_automovel_data)
 
     assert created_automovel.id is not None
@@ -16,7 +15,6 @@ async def test_create_automovel(automovel_crud: AutomovelCRUD, sample_automovel_
 
 @pytest.mark.asyncio
 async def test_get_automovel_by_id(automovel_crud: AutomovelCRUD, sample_automovel_data: AutomovelCreate):
-    """Testa a recuperação de um automóvel por ID."""
     created_automovel = await automovel_crud.create_automovel(sample_automovel_data)
     fetched_automovel = await automovel_crud.get_automovel_by_id(created_automovel.id)
 
@@ -29,7 +27,6 @@ async def test_get_automovel_by_id(automovel_crud: AutomovelCRUD, sample_automov
 
 @pytest.mark.asyncio
 async def test_get_all_automoveis_no_filters(automovel_crud: AutomovelCRUD, sample_automovel_data: AutomovelCreate):
-    """Testa a recuperação de todos os automóveis sem filtros."""
     await automovel_crud.create_automovel(sample_automovel_data)
     await automovel_crud.create_automovel(
         AutomovelCreate(
@@ -43,8 +40,7 @@ async def test_get_all_automoveis_no_filters(automovel_crud: AutomovelCRUD, samp
 
 @pytest.mark.asyncio
 async def test_get_all_automoveis_with_filters(automovel_crud: AutomovelCRUD, sample_automovel_data: AutomovelCreate):
-    """Testa a recuperação de automóveis com filtros."""
-    await automovel_crud.create_automovel(sample_automovel_data) # Onix
+    await automovel_crud.create_automovel(sample_automovel_data)
     await automovel_crud.create_automovel(
         AutomovelCreate(
             marca="Ford", modelo="Ka", ano=2020, cor="Branco",
@@ -60,17 +56,14 @@ async def test_get_all_automoveis_with_filters(automovel_crud: AutomovelCRUD, sa
         )
     )
 
-    # Testar filtro por marca
     filtered_automoveis = await automovel_crud.get_all_automoveis(marca="Chevrolet")
     assert len(filtered_automoveis) == 2
     assert all(a.marca == "Chevrolet" for a in filtered_automoveis)
 
-    # Testar filtro por ano_min e quilometragem_max
     filtered_automoveis = await automovel_crud.get_all_automoveis(ano_min=2021, quilometragem_max=45000.0)
     assert len(filtered_automoveis) == 2 # Onix 2022 e Cruze 2021
     assert all(a.ano >= 2021 and a.quilometragem <= 45000.0 for a in filtered_automoveis)
 
-    # Testar filtro por tipo de combustível
     filtered_automoveis = await automovel_crud.get_all_automoveis(tipo_combustivel=TipoCombustivel.GASOLINA)
     assert len(filtered_automoveis) == 1
     assert filtered_automoveis[0].modelo == "Cruze"
@@ -78,7 +71,6 @@ async def test_get_all_automoveis_with_filters(automovel_crud: AutomovelCRUD, sa
 
 @pytest.mark.asyncio
 async def test_update_automovel(automovel_crud: AutomovelCRUD, sample_automovel_data: AutomovelCreate):
-    """Testa a atualização de um automóvel."""
     created_automovel = await automovel_crud.create_automovel(sample_automovel_data)
 
     update_data = AutomovelUpdate(cor="Azul", quilometragem=20000.0)
@@ -88,7 +80,6 @@ async def test_update_automovel(automovel_crud: AutomovelCRUD, sample_automovel_
     assert updated_automovel.id == created_automovel.id
     assert updated_automovel.cor == "Azul"
     assert updated_automovel.quilometragem == 20000.0
-    # Verifique se outros campos não foram alterados
     assert updated_automovel.marca == created_automovel.marca
 
     not_found_update = await automovel_crud.update_automovel(9999, update_data)
@@ -96,7 +87,6 @@ async def test_update_automovel(automovel_crud: AutomovelCRUD, sample_automovel_
 
 @pytest.mark.asyncio
 async def test_delete_automovel(automovel_crud: AutomovelCRUD, sample_automovel_data: AutomovelCreate):
-    """Testa a exclusão de um automóvel."""
     created_automovel = await automovel_crud.create_automovel(sample_automovel_data)
     assert await automovel_crud.get_automovel_by_id(created_automovel.id) is not None
 
