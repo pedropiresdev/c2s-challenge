@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 from app.repository.models.automovel import Automovel, Base
 
-engine = create_async_engine(settings.database_url, echo=True)
+engine = create_async_engine(settings.DATABASE_URL, echo=True)
 AsyncSessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine, class_=AsyncSession
 )
