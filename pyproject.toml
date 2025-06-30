@@ -30,6 +30,7 @@ dependencies = [
     # Dependências de formatação de código
     "black",
     "isort",
+    "fastapi-mcp>=0.3.4",
 ]
 
 

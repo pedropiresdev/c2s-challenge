@@ -1,7 +1,6 @@
 import pytest
 
-from app.schemas.automovel_schemas import (AutomovelCreate, AutomovelUpdate,
-                                           TipoCombustivel)
+from app.schemas.automovel_schemas import (AutomovelCreate, TipoCombustivel, AutomovelBase)
 from app.view.automovel_crud import AutomovelCRUD
 
 
@@ -115,7 +114,7 @@ async def test_update_automovel(
 ):
     created_automovel = await automovel_crud.create_automovel(sample_automovel_data)
 
-    update_data = AutomovelUpdate(cor="Azul", quilometragem=20000.0)
+    update_data = AutomovelBase(cor="Azul", quilometragem=20000.0)
     updated_automovel = await automovel_crud.update_automovel(
         created_automovel.id, update_data
     )

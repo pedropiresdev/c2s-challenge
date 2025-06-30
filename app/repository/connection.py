@@ -1,3 +1,5 @@
+import logging
+
 from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
 from sqlalchemy.orm import declarative_base
@@ -15,4 +17,11 @@ Base = declarative_base()
 
 async def get_db_session():
     async with AsyncSessionLocal() as session:
-        yield session
+        try:
+            yield session
+        except Exception as e:
+            logging.error(f"Falha ao gerar a conexão. Erro={e}")
+            await session.rollback()
+        finally:
+            await session.close()
+

@@ -4,9 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repository.models.automovel import Automovel
-from app.schemas.automovel_schemas import (AutomovelCreate, AutomovelFilter,
-                                           AutomovelInDataBase,
-                                           AutomovelUpdate, TipoCombustivel)
+from app.schemas.automovel_schemas import (AutomovelFilter, AutomovelInDataBase, AutomovelBase)
 
 
 class AutomovelCRUD:
@@ -22,7 +20,7 @@ class AutomovelCRUD:
             if filters.marca:
                 query = query.filter(
                     Automovel.marca.ilike(f"%{filters.marca}%")
-                )  # Case-insensitive LIKE
+                )
             if filters.modelo:
                 query = query.filter(Automovel.modelo.ilike(f"%{filters.modelo}%"))
             if filters.ano_min:
@@ -61,7 +59,7 @@ class AutomovelCRUD:
             return AutomovelInDataBase.model_validate(automovel_orm)
         return None
 
-    async def create_automovel(self, automovel: AutomovelCreate) -> AutomovelInDataBase:
+    async def create_automovel(self, automovel: AutomovelBase) -> AutomovelInDataBase:
         new_automovel_orm = Automovel(**automovel.model_dump())
         self.db_session.add(new_automovel_orm)
         await self.db_session.commit()
@@ -69,7 +67,7 @@ class AutomovelCRUD:
         return AutomovelInDataBase.model_validate(new_automovel_orm)
 
     async def update_automovel(
-        self, automovel_id: int, automovel_update: AutomovelUpdate
+        self, automovel_id: int, automovel_update: AutomovelBase
     ) -> Optional[AutomovelInDataBase]:
         automovel_orm = await self.db_session.get(Automovel, automovel_id)
         if not automovel_orm:

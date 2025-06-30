@@ -4,9 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repository.connection import get_db_session
-from app.schemas.automovel_schemas import (AutomovelCreate, AutomovelFilter,
-                                           AutomovelInDataBase,
-                                           AutomovelUpdate, TipoCombustivel)
+from app.schemas.automovel_schemas import (AutomovelFilter, AutomovelInDataBase, AutomovelBase)
 from app.view.automovel_crud import AutomovelCRUD
 
 router = APIRouter()
@@ -17,13 +15,13 @@ router = APIRouter()
     "/", response_model=AutomovelInDataBase, status_code=status.HTTP_201_CREATED
 )
 async def create_automovel_endpoint(
-    automovel: AutomovelCreate, db_session: AsyncSession = Depends(get_db_session)
+    automovel: AutomovelBase, db_session: AsyncSession = Depends(get_db_session)
 ):
     crud = AutomovelCRUD(db_session)
     return await crud.create_automovel(automovel)
 
 
-@router.get("/", response_model=List[AutomovelInDataBase])
+@router.get("/", response_model=List[AutomovelInDataBase], operation_id="get_automoveis")
 async def read_automoveis_endpoint(
     filters: AutomovelFilter = Depends(),
     db_session: AsyncSession = Depends(get_db_session),
@@ -56,7 +54,7 @@ async def read_automovel_endpoint(
 @router.put("/{automovel_id}", response_model=AutomovelInDataBase)
 async def update_automovel_endpoint(
     automovel_id: int,
-    automovel_update: AutomovelUpdate,
+    automovel_update: AutomovelBase,
     db_session: AsyncSession = Depends(get_db_session),
 ):
     crud = AutomovelCRUD(db_session)
